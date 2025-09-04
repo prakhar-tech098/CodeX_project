@@ -94,7 +94,7 @@ class TeacherLogin extends StatelessWidget {
                       backgroundColor: Colors.orange,
                     ),
                     onPressed: () {
-                      // TODO: handle teacher login
+
                     },
                     child: const Text(
                       "Login",
