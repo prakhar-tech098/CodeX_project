@@ -115,7 +115,7 @@ class StudentLogin extends StatelessWidget {
                     const Text("Don’t have an account? "),
                     GestureDetector(
                       onTap: () {
-                        // TODO: Navigate to create account page
+
                       },
                       child:  TextButton(onPressed: (){
                         Navigator.push(context, MaterialPageRoute(builder: (context)=>StudentSignup()));

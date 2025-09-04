@@ -115,7 +115,7 @@ class TeacherSignup extends StatelessWidget {
                         backgroundColor: Colors.orange,
                       ),
                       onPressed: () {
-                        // TODO: handle teacher signup
+
                       },
                       child: const Text(
                         "Sign Up",
