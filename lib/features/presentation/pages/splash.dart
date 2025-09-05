@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:sih_timetable/features/authentication/auth/role_section.dart';
+import 'package:sih_timetable/features/presentation/pages/dashboard_screen.dart';
 
 
 class Splashscreen extends StatefulWidget {
@@ -28,9 +29,13 @@ class _SplashscreenState extends State<Splashscreen>
 
     // Navigate to LoginScreen after 3 seconds
     Future.delayed(const Duration(seconds: 3), () {
+      // Navigator.pushReplacement(
+      //   context,
+      //   MaterialPageRoute(builder: (context) => RoleSection()),
+      // );
       Navigator.pushReplacement(
         context,
-        MaterialPageRoute(builder: (context) => const RoleSection()),
+        MaterialPageRoute(builder: (context) => DashboardScreen()),
       );
     });
   }

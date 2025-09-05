@@ -1,7 +1,51 @@
 import 'package:flutter/material.dart';
+import 'package:sih_timetable/features/authentication/auth/auth_service.dart';
 
-class StudentSignup extends StatelessWidget {
+
+class StudentSignup extends StatefulWidget {
   const StudentSignup({super.key});
+
+  @override
+  State<StudentSignup> createState() => _StudentSignupState();
+}
+
+class _StudentSignupState extends State<StudentSignup> {
+  final TextEditingController emailController = TextEditingController();
+  final TextEditingController passwordController = TextEditingController();
+  final TextEditingController confirmPasswordController =
+  TextEditingController();
+
+  Future<void> _signup() async {
+    String email = emailController.text.trim();
+    String password = passwordController.text.trim();
+    String confirmPassword = confirmPasswordController.text.trim();
+
+    if (password != confirmPassword) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(content: Text("❌ Passwords do not match")),
+      );
+      return;
+    }
+
+    try {
+      var user = await AuthService().signup(
+        email,
+        password,
+        "student", // role stored in Firestore
+      );
+
+      if (user != null) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(content: Text("✅ Signup Successful")),
+        );
+        Navigator.pop(context); // go back to login
+      }
+    } catch (e) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text("❌ Signup Failed: $e")),
+      );
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -12,9 +56,7 @@ class StudentSignup extends StatelessWidget {
       appBar: AppBar(
         backgroundColor: Colors.white,
         leading: IconButton(
-          onPressed: () {
-            Navigator.pop(context);
-          },
+          onPressed: () => Navigator.pop(context),
           icon: const Icon(Icons.arrow_back, color: Colors.black),
         ),
         elevation: 0,
@@ -24,10 +66,7 @@ class StudentSignup extends StatelessWidget {
         height: screenHeight,
         decoration: const BoxDecoration(
           gradient: LinearGradient(
-            colors: [
-              Color(0xFFFFFFFF), // White
-              Color(0xFFEFF9FF), // Very Light Blue tint
-            ],
+            colors: [Color(0xFFFFFFFF), Color(0xFFEFF9FF)],
             begin: Alignment.topCenter,
             end: Alignment.bottomCenter,
           ),
@@ -40,7 +79,6 @@ class StudentSignup extends StatelessWidget {
               child: Column(
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
-                  // Title
                   const Text(
                     "CREATE ACCOUNT",
                     style: TextStyle(
@@ -51,9 +89,9 @@ class StudentSignup extends StatelessWidget {
                   ),
                   const SizedBox(height: 20),
 
-
-                  // Email Field
+                  // Email
                   TextField(
+                    controller: emailController,
                     decoration: InputDecoration(
                       labelText: "Email",
                       prefixIcon: const Icon(Icons.email_outlined),
@@ -66,8 +104,9 @@ class StudentSignup extends StatelessWidget {
                   ),
                   const SizedBox(height: 20),
 
-                  // Password Field
+                  // Password
                   TextField(
+                    controller: passwordController,
                     obscureText: true,
                     decoration: InputDecoration(
                       labelText: "Password",
@@ -81,8 +120,9 @@ class StudentSignup extends StatelessWidget {
                   ),
                   const SizedBox(height: 20),
 
-                  // Confirm Password Field
+                  // Confirm Password
                   TextField(
+                    controller: confirmPasswordController,
                     obscureText: true,
                     decoration: InputDecoration(
                       labelText: "Confirm Password",
@@ -96,7 +136,7 @@ class StudentSignup extends StatelessWidget {
                   ),
                   const SizedBox(height: 30),
 
-                  // Signup Button
+                  // Sign Up Button
                   SizedBox(
                     width: double.infinity,
                     child: ElevatedButton(
@@ -107,9 +147,7 @@ class StudentSignup extends StatelessWidget {
                         ),
                         backgroundColor: Colors.green,
                       ),
-                      onPressed: () {
-
-                      },
+                      onPressed: _signup,
                       child: const Text(
                         "Sign Up",
                         style: TextStyle(
@@ -128,9 +166,7 @@ class StudentSignup extends StatelessWidget {
                     children: [
                       const Text("Already have an account? "),
                       GestureDetector(
-                        onTap: () {
-                          Navigator.pop(context); // Go back to login
-                        },
+                        onTap: () => Navigator.pop(context),
                         child: const Text(
                           "Login",
                           style: TextStyle(
