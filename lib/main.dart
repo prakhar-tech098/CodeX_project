@@ -1,5 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:firebase_core/firebase_core.dart';
+import 'package:sih_timetable/features/presentation/pages/splash.dart';
+import 'package:sih_timetable/features/presentation/pages/student_dashboard.dart';
+import 'package:sih_timetable/features/presentation/pages/teacher_dashboard.dart';
 
 // Make sure you have a firebase_options.dart file from flutterfire configure
 import 'features/authentication/auth/role_section.dart';
@@ -26,7 +29,7 @@ class MyApp extends StatelessWidget {
         primarySwatch: Colors.blue,
         visualDensity: VisualDensity.adaptivePlatformDensity,
       ),
-      home: const RoleSelectionScreen(),
+      home: TeacherDashboard(),
       debugShowCheckedModeBanner: false,
     );
   }

@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import '../../presentation/pages/teacher_dashboard.dart';
 import 'auth_service.dart';
 import 'teacher_signup.dart';
- // Assuming dashboards folder
+// Assuming dashboards folder
 
 class TeacherLoginScreen extends StatefulWidget {
   const TeacherLoginScreen({super.key});
@@ -103,7 +103,17 @@ class _TeacherLoginScreenState extends State<TeacherLoginScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(title: const Text('Teacher Login')),
+      backgroundColor: const Color(0xFFF0F4F8), // Light background color
+      appBar: AppBar(
+        leading: IconButton(
+          icon: const Icon(Icons.arrow_back),
+          onPressed: () {
+            Navigator.pop(context);
+          },
+        ),
+        backgroundColor: Colors.transparent,
+        elevation: 0,
+      ),
       body: Center(
         child: SingleChildScrollView(
           padding: const EdgeInsets.all(16.0),
@@ -111,28 +121,61 @@ class _TeacherLoginScreenState extends State<TeacherLoginScreen> {
             key: _formKey,
             child: Column(
               mainAxisAlignment: MainAxisAlignment.center,
+              crossAxisAlignment: CrossAxisAlignment.center,
               children: [
                 const Icon(Icons.person, size: 80, color: Colors.deepPurpleAccent),
-                const SizedBox(height: 20),
+                const Text(
+                  'FACULTY LOGIN',
+                  style: TextStyle(
+                    fontSize: 24,
+                    fontWeight: FontWeight.bold,
+                  ),
+                ),
+                const SizedBox(height: 8),
+                const Text(
+                  'Login to continue',
+                  style: TextStyle(
+                    fontSize: 16,
+                    color: Colors.grey,
+                  ),
+                ),
+                const SizedBox(height: 40),
                 TextFormField(
                   controller: _emailController,
-                  decoration: const InputDecoration(labelText: 'Email', border: OutlineInputBorder()),
+                  decoration: InputDecoration(
+                    labelText: 'Email',
+                    prefixIcon: const Icon(Icons.email_outlined, color: Colors.black54),
+                    border: OutlineInputBorder(
+                      borderRadius: BorderRadius.circular(10),
+                    ),
+                    filled: true,
+                    fillColor: Colors.white,
+                  ),
                   validator: (value) => value!.isEmpty ? 'Enter an email' : null,
                 ),
-                const SizedBox(height: 10),
+                const SizedBox(height: 16),
                 TextFormField(
                   controller: _passwordController,
-                  decoration: const InputDecoration(labelText: 'Password', border: OutlineInputBorder()),
+                  decoration: InputDecoration(
+                    labelText: 'Password',
+                    prefixIcon: const Icon(Icons.lock_outline, color: Colors.black54),
+                    border: OutlineInputBorder(
+                      borderRadius: BorderRadius.circular(10),
+                    ),
+                    filled: true,
+                    fillColor: Colors.white,
+                  ),
                   obscureText: true,
                   validator: (value) => value!.length < 6 ? 'Enter a password 6+ chars long' : null,
                 ),
-                const SizedBox(height: 10),
-                // NEW: Forgot Password Button
                 Align(
                   alignment: Alignment.centerRight,
                   child: TextButton(
                     onPressed: _showForgotPasswordDialog,
-                    child: const Text('Forgot Password?'),
+                    child: const Text(
+                      'Forgot Password?',
+                      style: TextStyle(color: Colors.lightBlue),
+                    ),
                   ),
                 ),
                 const SizedBox(height: 10),
@@ -140,17 +183,40 @@ class _TeacherLoginScreenState extends State<TeacherLoginScreen> {
                     ? const CircularProgressIndicator()
                     : ElevatedButton(
                   onPressed: _login,
-                  child: const Text('Login'),
-                  style: ElevatedButton.styleFrom(minimumSize: const Size(double.infinity, 50)),
+                  style: ElevatedButton.styleFrom(
+                    backgroundColor: Colors.orange, // Changed button color to orange
+                    foregroundColor: Colors.white,
+                    minimumSize: const Size(double.infinity, 50),
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(10),
+                    ),
+                  ),
+                  child: const Text('Login', style: TextStyle(fontSize: 18)),
                 ),
-                TextButton(
-                  child: const Text('Need an account? Sign up'),
-                  onPressed: () {
-                    Navigator.push(
-                      context,
-                      MaterialPageRoute(builder: (context) => const TeacherSignUpScreen()),
-                    );
-                  },
+                const SizedBox(height: 20),
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    const Text(
+                      "Don't have an account? ",
+                      style: TextStyle(color: Colors.black54),
+                    ),
+                    InkWell(
+                      onTap: () {
+                        Navigator.push(
+                          context,
+                          MaterialPageRoute(builder: (context) => const TeacherSignUpScreen()),
+                        );
+                      },
+                      child: const Text(
+                        'Create Account',
+                        style: TextStyle(
+                          color: Colors.lightBlue,
+                          fontWeight: FontWeight.bold,
+                        ),
+                      ),
+                    ),
+                  ],
                 ),
               ],
             ),
@@ -160,4 +226,3 @@ class _TeacherLoginScreenState extends State<TeacherLoginScreen> {
     );
   }
 }
-
