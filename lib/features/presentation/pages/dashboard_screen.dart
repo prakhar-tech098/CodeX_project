@@ -148,7 +148,7 @@ class DashboardScreen extends StatelessWidget {
         borderRadius: BorderRadius.circular(12),
       ),
       elevation: 5, // Added elevation for the shadow effect
-      shadowColor: Colors.grey.withOpacity(0.5), // Customizing shadow color
+      shadowColor: Colors.grey, // Customizing shadow color
       child: InkWell(
         onTap: () {
           // Handle tap event for each item.
