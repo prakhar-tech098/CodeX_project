@@ -1,206 +1,156 @@
 import 'package:flutter/material.dart';
-import 'package:firebase_auth/firebase_auth.dart';
-import 'package:sih_timetable/features/authentication/auth/student_signup.dart';
+import '../../presentation/pages/student_dashboard.dart';
+import 'auth_service.dart';
+import 'student_signup.dart';
+ // Assuming dashboards folder
 
-class StudentLogin extends StatefulWidget {
-  const StudentLogin({super.key});
+class StudentLoginScreen extends StatefulWidget {
+  const StudentLoginScreen({super.key});
 
   @override
-  State<StudentLogin> createState() => _StudentLoginState();
+  _StudentLoginScreenState createState() => _StudentLoginScreenState();
 }
 
-class _StudentLoginState extends State<StudentLogin> {
-  final TextEditingController emailController = TextEditingController();
-  final TextEditingController passwordController = TextEditingController();
+class _StudentLoginScreenState extends State<StudentLoginScreen> {
+  final AuthService _authService = AuthService();
+  final _emailController = TextEditingController();
+  final _passwordController = TextEditingController();
+  final _formKey = GlobalKey<FormState>();
+  bool _isLoading = false;
 
-  final FirebaseAuth _auth = FirebaseAuth.instance;
+  void _login() async {
+    if (_formKey.currentState!.validate()) {
+      setState(() {
+        _isLoading = true;
+      });
 
-  // Firebase login
-  Future<User?> login(String email, String password) async {
-    try {
-      UserCredential userCredential =
-      await _auth.signInWithEmailAndPassword(email: email, password: password);
-      return userCredential.user;
-    } on FirebaseAuthException catch (e) {
-      debugPrint("Login error: ${e.message}");
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text(e.message ?? "Login Failed")),
+      final userCredential = await _authService.signInWithEmailPassword(
+        _emailController.text,
+        _passwordController.text,
+        context,
       );
-      return null;
+
+      // Check if the widget is still in the tree
+      if (!mounted) return;
+
+      setState(() {
+        _isLoading = false;
+      });
+
+      if (userCredential != null) {
+        final role = await _authService.getUserRole(userCredential.user!.uid);
+        if (role == 'student') {
+          Navigator.pushReplacement(
+            context,
+            MaterialPageRoute(builder: (context) => const StudentDashboard()),
+          );
+        } else {
+          _authService.signOut();
+          ScaffoldMessenger.of(context).showSnackBar(
+            const SnackBar(content: Text('Not a student account.')),
+          );
+        }
+      }
     }
   }
 
-  // Forgot Password
-  Future<void> resetPassword(String email) async {
-    try {
-      await _auth.sendPasswordResetEmail(email: email);
-      ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(content: Text("📧 Password reset email sent!")),
-      );
-    } on FirebaseAuthException catch (e) {
-      debugPrint("Reset error: ${e.message}");
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text(e.message ?? "Failed to send reset email")),
-      );
-    }
+  // NEW: Function to show the forgot password dialog
+  void _showForgotPasswordDialog() {
+    final TextEditingController resetEmailController = TextEditingController();
+
+    // Pre-fill the email if the user has already typed it
+    resetEmailController.text = _emailController.text;
+
+    showDialog(
+      context: context,
+      builder: (context) => AlertDialog(
+        title: const Text('Reset Password'),
+        content: Column(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            const Text('Enter your email address to receive a password reset link.'),
+            const SizedBox(height: 16),
+            TextField(
+              controller: resetEmailController,
+              decoration: const InputDecoration(
+                labelText: 'Email',
+                border: OutlineInputBorder(),
+              ),
+              keyboardType: TextInputType.emailAddress,
+            ),
+          ],
+        ),
+        actions: [
+          TextButton(
+            child: const Text('Cancel'),
+            onPressed: () => Navigator.of(context).pop(),
+          ),
+          ElevatedButton(
+            child: const Text('Send Link'),
+            onPressed: () {
+              final email = resetEmailController.text.trim();
+              if (email.isNotEmpty) {
+                _authService.sendPasswordResetEmail(email, context);
+                Navigator.of(context).pop();
+              }
+            },
+          ),
+        ],
+      ),
+    );
   }
 
   @override
   Widget build(BuildContext context) {
-    final screenWidth = MediaQuery.of(context).size.width;
-
     return Scaffold(
-      appBar: AppBar(
-        backgroundColor: Colors.white,
-        leading: IconButton(
-          onPressed: () {
-            Navigator.pop(context);
-          },
-          icon: const Icon(Icons.arrow_back, color: Colors.black),
-        ),
-      ),
-      body: Container(
-        width: screenWidth,
-        height: MediaQuery.of(context).size.height,
-        decoration: const BoxDecoration(
-          gradient: LinearGradient(
-            colors: [Color(0xFFFFFFFF), Color(0xFFEFF9FF)],
-            begin: Alignment.topCenter,
-            end: Alignment.bottomCenter,
-          ),
-        ),
-        child: Center(
-          child: SingleChildScrollView(
-            padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 40),
+      appBar: AppBar(title: const Text('Student Login')),
+      body: Center(
+        child: SingleChildScrollView(
+          padding: const EdgeInsets.all(16.0),
+          child: Form(
+            key: _formKey,
             child: Column(
               mainAxisAlignment: MainAxisAlignment.center,
               children: [
-                // Title
-                const Text(
-                  "STUDENT LOGIN",
-                  style: TextStyle(
-                    fontSize: 26,
-                    fontWeight: FontWeight.bold,
-                    color: Colors.black87,
-                  ),
-                ),
-                const SizedBox(height: 10),
-                const Text(
-                  "Login to continue",
-                  style: TextStyle(fontSize: 16, color: Colors.black54),
-                ),
-                const SizedBox(height: 30),
-
-                // Email
-                TextField(
-                  controller: emailController,
-                  decoration: InputDecoration(
-                    labelText: "Email",
-                    prefixIcon: const Icon(Icons.email_outlined),
-                    filled: true,
-                    fillColor: Colors.white,
-                    border: OutlineInputBorder(
-                      borderRadius: BorderRadius.circular(12),
-                    ),
-                  ),
-                ),
+                const Icon(Icons.school, size: 80, color: Colors.blueAccent),
                 const SizedBox(height: 20),
-
-                // Password
-                TextField(
-                  controller: passwordController,
-                  obscureText: true,
-                  decoration: InputDecoration(
-                    labelText: "Password",
-                    prefixIcon: const Icon(Icons.lock_outline),
-                    filled: true,
-                    fillColor: Colors.white,
-                    border: OutlineInputBorder(
-                      borderRadius: BorderRadius.circular(12),
-                    ),
-                  ),
+                TextFormField(
+                  controller: _emailController,
+                  decoration: const InputDecoration(labelText: 'Email', border: OutlineInputBorder()),
+                  validator: (value) => value!.isEmpty ? 'Enter an email' : null,
                 ),
                 const SizedBox(height: 10),
-
-                // Forgot Password
+                TextFormField(
+                  controller: _passwordController,
+                  decoration: const InputDecoration(labelText: 'Password', border: OutlineInputBorder()),
+                  obscureText: true,
+                  validator: (value) => value!.length < 6 ? 'Enter a password 6+ chars long' : null,
+                ),
+                const SizedBox(height: 10),
+                // NEW: Forgot Password Button
                 Align(
                   alignment: Alignment.centerRight,
                   child: TextButton(
-                    onPressed: () {
-                      if (emailController.text.isNotEmpty) {
-                        resetPassword(emailController.text.trim());
-                      } else {
-                        ScaffoldMessenger.of(context).showSnackBar(
-                          const SnackBar(
-                              content: Text("⚠ Please enter your email")),
-                        );
-                      }
-                    },
-                    child: const Text(
-                      "Forgot Password?",
-                      style: TextStyle(color: Colors.blue),
-                    ),
+                    onPressed: _showForgotPasswordDialog,
+                    child: const Text('Forgot Password?'),
                   ),
                 ),
-                const SizedBox(height: 20),
-
-                // Login Button
-                SizedBox(
-                  width: double.infinity,
-                  child: ElevatedButton(
-                    style: ElevatedButton.styleFrom(
-                      padding: const EdgeInsets.symmetric(vertical: 16),
-                      shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(12),
-                      ),
-                      backgroundColor: Colors.green,
-                    ),
-                    onPressed: () async {
-                      String email = emailController.text.trim();
-                      String password = passwordController.text.trim();
-
-                      var user = await login(email, password);
-
-                      if (user != null) {
-                        ScaffoldMessenger.of(context).showSnackBar(
-                          const SnackBar(content: Text("✅ Login Successful")),
-                        );
-
-                      }
-                    },
-                    child: const Text(
-                      "Login",
-                      style: TextStyle(
-                        fontSize: 18,
-                        color: Colors.white,
-                        fontWeight: FontWeight.bold,
-                      ),
-                    ),
-                  ),
+                const SizedBox(height: 10),
+                _isLoading
+                    ? const CircularProgressIndicator()
+                    : ElevatedButton(
+                  onPressed: _login,
+                  child: const Text('Login'),
+                  style: ElevatedButton.styleFrom(minimumSize: const Size(double.infinity, 50)),
                 ),
-                const SizedBox(height: 20),
-
-                // Create Account
-                Row(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  children: [
-                    const Text("Don’t have an account? "),
-                    TextButton(
-                      onPressed: () {
-                        Navigator.push(
-                          context,
-                          MaterialPageRoute(builder: (context) => const StudentSignup()),
-                        );
-                      },
-                      child: const Text(
-                        "Create Account",
-                        style: TextStyle(
-                          color: Colors.green,
-                          fontWeight: FontWeight.bold,
-                        ),
-                      ),
-                    ),
-                  ],
+                TextButton(
+                  child: const Text('Need an account? Sign up'),
+                  onPressed: () {
+                    Navigator.push(
+                      context,
+                      MaterialPageRoute(builder: (context) => const StudentSignUpScreen()),
+                    );
+                  },
                 ),
               ],
             ),
@@ -210,3 +160,4 @@ class _StudentLoginState extends State<StudentLogin> {
     );
   }
 }
+

@@ -1,13 +1,13 @@
 {
   "project_info": {
-    "project_number": "883667453183",
-    "project_id": "codexproject-e1552",
-    "storage_bucket": "codexproject-e1552.firebasestorage.app"
+    "project_number": "372794944017",
+    "project_id": "sih-project-4ac7f",
+    "storage_bucket": "sih-project-4ac7f.firebasestorage.app"
   },
   "client": [
     {
       "client_info": {
-        "mobilesdk_app_id": "1:883667453183:android:7b3afa7c30b310e345f8ca",
+        "mobilesdk_app_id": "1:372794944017:android:524ab8d5f16ac198509fb0",
         "android_client_info": {
           "package_name": "com.example.sih_timetable"
         }
@@ -15,7 +15,7 @@
       "oauth_client": [],
       "api_key": [
         {
-          "current_key": "AIzaSyD90evCEFpO2JviLJNj3_E_Tz0oDTifkZo"
+          "current_key": "AIzaSyB_ViFOjIk1XLQwu7C9KmVbOBglbtQN7AU"
         }
       ],
       "services": {
