@@ -50,7 +50,7 @@ class _StudentLoginScreenState extends State<StudentLoginScreen> {
           // **FIXED:** Uncommented the navigation and ensured the screen name is correct.
           Navigator.pushAndRemoveUntil(
             context,
-            MaterialPageRoute(builder: (context) => const StudentDashboardScreen()),
+            MaterialPageRoute(builder: (context) =>  StudentDashboardScreen()),
                 (route) => false, // This removes all previous screens from the stack
           );
         } else {
@@ -235,4 +235,3 @@ class _StudentLoginScreenState extends State<StudentLoginScreen> {
     );
   }
 }
-

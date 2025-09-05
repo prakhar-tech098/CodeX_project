@@ -27,7 +27,7 @@ class _SplashscreenState extends State<Splashscreen>
     });
 
     // Navigate to LoginScreen after 3 seconds
-    Future.delayed(const Duration(seconds: 3), () {
+    Future.delayed(const Duration(seconds: 4), () {
       Navigator.pushReplacement(
         context,
         MaterialPageRoute(builder: (context) => const RoleSelectionScreen()),
@@ -62,7 +62,7 @@ class _SplashscreenState extends State<Splashscreen>
               duration: const Duration(seconds: 1),
               curve: Curves.easeOutBack,
               child: Image.asset(
-                "assets/images/codex.png", // your logo path
+                "assets/images/timely.png", // your logo path
                 width: 300,
                 height: 320,
               ),

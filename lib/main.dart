@@ -29,7 +29,7 @@ class MyApp extends StatelessWidget {
         primarySwatch: Colors.blue,
         visualDensity: VisualDensity.adaptivePlatformDensity,
       ),
-      home: TeacherDashboard(),
+      home: Splashscreen(),
       debugShowCheckedModeBanner: false,
     );
   }

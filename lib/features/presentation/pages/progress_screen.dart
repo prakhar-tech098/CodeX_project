@@ -29,12 +29,12 @@ class ProgressScreen extends StatefulWidget {
 class _ProgressScreenState extends State<ProgressScreen> {
   // MANUAL DUMMY DATA - This will be replaced by your Firebase data later
   final List<Session> _sessions = [
-    Session(id: '1', title: 'Introduction to Thermodynamics', date: DateTime(2025, 9, 10)),
-    Session(id: '2', title: 'First Law of Thermodynamics', date: DateTime(2025, 9, 12)),
-    Session(id: '3', title: 'Second Law & Entropy', date: DateTime(2025, 9, 15), status: SessionStatus.completed),
-    Session(id: '4', title: 'Thermodynamic Cycles', date: DateTime(2025, 9, 17), status: SessionStatus.completed),
-    Session(id: '5', title: 'Heat Engines & Refrigerators', date: DateTime(2025, 9, 19)),
-    Session(id: '6', title: 'Mid-term Review', date: DateTime(2025, 9, 22), status: SessionStatus.postponed),
+    Session(id: '1', title: 'Computer Network', date: DateTime(2025, 9, 10)),
+    Session(id: '2', title: 'Introduction to AI', date: DateTime(2025, 9, 12)),
+    Session(id: '3', title: 'Advance Java', date: DateTime(2025, 9, 15), status: SessionStatus.completed),
+    Session(id: '4', title: 'Python', date: DateTime(2025, 9, 17), status: SessionStatus.completed),
+    Session(id: '5', title: 'Theory of automata', date: DateTime(2025, 9, 19)),
+    Session(id: '6', title: 'Data Science', date: DateTime(2025, 9, 22), status: SessionStatus.postponed),
     Session(id: '7', title: 'Guest Lecture on Cryogenics', date: DateTime(2025, 9, 3), status: SessionStatus.cancelled),
     Session(id: '8', title: 'Gibbs Free Energy', date: DateTime(2025, 9, 24)),
     Session(id: '9', title: 'Maxwell Relations', date: DateTime(2025, 9, 26), status: SessionStatus.completed),
@@ -70,7 +70,7 @@ class _ProgressScreenState extends State<ProgressScreen> {
           child: Padding(
             padding: const EdgeInsets.only(bottom: 8.0),
             child: Text(
-              'B.Tech CSE - Semester 3',
+              'B.Tech CS - Semester V',
               style: TextStyle(color: Colors.white.withOpacity(0.8), fontSize: 14),
             ),
           ),

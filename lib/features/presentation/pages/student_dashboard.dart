@@ -35,38 +35,38 @@ class StudentDashboardScreen extends StatelessWidget {
               onPressed: () {
                 Scaffold.of(context).openDrawer();
               },
-              icon: const Icon(Icons.menu, color: Colors.black),
+              icon: const Icon(Icons.menu, color: Colors.white),
             );
           },
         ),
         title: const Text(
-          "Dashboard",
+          "Student Dashboard",
           style: TextStyle(
-            color: Colors.black,
+            color: Colors.white,
             fontWeight: FontWeight.bold,
           ),
         ),
         backgroundColor: Colors.green,
         elevation: 1,
-        actions: [
-          IconButton(
-            onPressed: () async {
-              await authService.signOut();
-              Navigator.pushAndRemoveUntil(
-                context,
-                MaterialPageRoute(builder: (context) => const RoleSelectionScreen()),
-                    (route) => false,
-              );
-            },
-            icon: const CircleAvatar(
-              backgroundColor: Colors.grey,
-              child: Icon(
-                Icons.person,
-                color: Colors.white,
-              ),
-            ),
-          ),
-        ],
+        // actions: [
+        //   IconButton(
+        //     onPressed: () async {
+        //       await authService.signOut();
+        //       Navigator.pushAndRemoveUntil(
+        //         context,
+        //         MaterialPageRoute(builder: (context) => const RoleSelectionScreen()),
+        //             (route) => false,
+        //       );
+        //     },
+        //     icon: const CircleAvatar(
+        //       backgroundColor: Colors.grey,
+        //       child: Icon(
+        //         Icons.person,
+        //         color: Colors.white,
+        //       ),
+        //     ),
+        //   ),
+        // ],
       ),
       drawer: Drawer(
         child: SingleChildScrollView(
@@ -76,7 +76,7 @@ class StudentDashboardScreen extends StatelessWidget {
 
 
                 decoration: BoxDecoration(
-                  color: Colors.lightBlue,
+                  color: Colors.green,
                 ),
                 child: SizedBox(
                   width: double.infinity,

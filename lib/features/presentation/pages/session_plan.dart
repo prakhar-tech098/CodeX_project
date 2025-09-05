@@ -98,7 +98,7 @@ class _SessionPlanScreenState extends State<SessionPlanScreen> {
       backgroundColor: const Color(0xFF1A1A2E), // Dark theme background
       appBar: AppBar(
         title: const Text("Academic Session Planner"),
-          backgroundColor: Colors.blue,
+        backgroundColor: Colors.blue,
         elevation: 0,
         actions: [
           IconButton(
@@ -133,6 +133,10 @@ class _SessionPlanScreenState extends State<SessionPlanScreen> {
               },
             ),
           ),
+          Padding(
+            padding: const EdgeInsets.symmetric(horizontal: 8.0, vertical: 10.0),
+            child: ChatInputBar(),
+          ),
         ],
       ),
       floatingActionButton: FloatingActionButton(
@@ -140,7 +144,7 @@ class _SessionPlanScreenState extends State<SessionPlanScreen> {
           // TODO: Implement Add Session logic
         },
         backgroundColor: const Color(0xFF0F3460),
-        child: const Icon(Icons.add),
+        child: const Icon(Icons.info_outline_rounded,color: Colors.white,),
       ),
     );
   }
@@ -306,6 +310,61 @@ class _SessionListItem extends StatelessWidget {
           // TODO: Implement Edit Session Logic
         },
       ),
+    );
+  }
+}
+
+class ChatInputBar extends StatelessWidget {
+  const ChatInputBar({super.key});
+
+  @override
+  Widget build(BuildContext context) {
+    return Row(
+      children: [
+        // Plus button on the left
+        IconButton(
+          icon: const Icon(Icons.add_circle_outline, color: Colors.grey),
+          onPressed: () {
+            // TODO: Implement attachment functionality
+          },
+        ),
+        // The main text input field
+        Expanded(
+          child: Container(
+            padding: const EdgeInsets.symmetric(horizontal: 16.0),
+            decoration: BoxDecoration(
+              color: Colors.grey[200],
+              borderRadius: BorderRadius.circular(30.0),
+            ),
+            child: const TextField(
+              decoration: InputDecoration(
+                hintText: 'Message...',
+                border: InputBorder.none,
+              ),
+            ),
+          ),
+        ),
+        // Microphone and send button on the right
+        IconButton(
+          icon: const Icon(Icons.mic, color: Colors.grey),
+          onPressed: () {
+            // TODO: Implement voice input functionality
+          },
+        ),
+        // The send/upload button in a circle
+        Container(
+          decoration: const BoxDecoration(
+            color: Colors.deepPurple,
+            shape: BoxShape.circle,
+          ),
+          child: IconButton(
+            icon: const Icon(Icons.arrow_upward, color: Colors.white),
+            onPressed: () {
+              // TODO: Implement send functionality
+            },
+          ),
+        ),
+      ],
     );
   }
 }

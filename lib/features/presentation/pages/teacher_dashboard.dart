@@ -10,7 +10,7 @@ class TeacherDashboard extends StatelessWidget {
   const TeacherDashboard({super.key});
 
   static const List<Map<String, dynamic>> dashboardItems = [
-    {'icon': Icons.account_balance_wallet_outlined, 'title': 'Fees'},
+    {'icon': Icons.person, 'title': 'Student Assessment'},
     {'icon': Icons.calendar_today_outlined, 'title': 'Holidays'},
     {'icon': Icons.campaign_outlined, 'title': 'Announcement'},
     {'icon': Icons.book_outlined, 'title': 'Bulletin Board'},
@@ -19,8 +19,8 @@ class TeacherDashboard extends StatelessWidget {
     {'icon': Icons.group_work, 'title': 'Progress Indicator'},
 
     {'icon': Icons.flight_land_outlined, 'title': 'Leave\nApplication'},
+    {'icon': Icons.library_books_rounded, 'title': 'Courses'},
 
-    {'icon': Icons.chat_bubble_outline, 'title': 'Lecture\nFeedback'},
   ];
 
   @override
@@ -37,14 +37,14 @@ class TeacherDashboard extends StatelessWidget {
               onPressed: () {
                 Scaffold.of(context).openDrawer();
               },
-              icon: const Icon(Icons.menu, color: Colors.black),
+              icon: const Icon(Icons.menu, color: Colors.white),
             );
           },
         ),
         title: const Text(
-          "Dashboard",
+          "Faculty Dashboard",
           style: TextStyle(
-            color: Colors.black,
+            color: Colors.white,
             fontWeight: FontWeight.bold,
           ),
         ),
@@ -78,7 +78,7 @@ class TeacherDashboard extends StatelessWidget {
 
 
                 decoration: BoxDecoration(
-                  color: Colors.lightBlue,
+                  color: Colors.orange,
                 ),
                 child: SizedBox(
                   width: double.infinity,
@@ -101,7 +101,7 @@ class TeacherDashboard extends StatelessWidget {
                       SizedBox(height: 7,),
 
                       Text(
-                        'Vani Tyagi',
+                        'Prakhar',
                         style: TextStyle(
                           color: Colors.white,
                           fontSize: 18,
@@ -110,11 +110,11 @@ class TeacherDashboard extends StatelessWidget {
 
 
                       Text(
-                        'Course Name: B.Tech CS',
+                        'Subject Name: AI & ML',
                         style: TextStyle(color: Colors.white),
                       ),
                       Text(
-                        'Semester Name: SEM-V',
+                        'Faculty id: AI0230',
                         style: TextStyle(color: Colors.white),
                       ),
 
