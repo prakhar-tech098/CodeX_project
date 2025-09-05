@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:sih_timetable/features/presentation/pages/progress_screen.dart';
 import 'package:sih_timetable/features/presentation/pages/session_plan.dart';
 import '../../authentication/auth/auth_service.dart';
 import '../../authentication/auth/role_section.dart';
@@ -15,6 +16,7 @@ class TeacherDashboard extends StatelessWidget {
     {'icon': Icons.book_outlined, 'title': 'Bulletin Board'},
     {'icon': Icons.description_outlined, 'title': 'Syllabus'},
     {'icon': Icons.schedule_outlined, 'title': 'Session Plan'},
+    {'icon': Icons.group_work, 'title': 'Progress Indicator'},
 
     {'icon': Icons.flight_land_outlined, 'title': 'Leave\nApplication'},
 
@@ -28,6 +30,7 @@ class TeacherDashboard extends StatelessWidget {
     return Scaffold(
       backgroundColor: Colors.grey[200],
       appBar: AppBar(
+        backgroundColor: Colors.orange,
         leading: Builder(
           builder: (context) {
             return IconButton(
@@ -45,27 +48,27 @@ class TeacherDashboard extends StatelessWidget {
             fontWeight: FontWeight.bold,
           ),
         ),
-        backgroundColor: Colors.white,
+        // backgroundColor: Colors.white,
         elevation: 1,
-        actions: [
-          IconButton(
-            onPressed: () async {
-              await authService.signOut();
-              Navigator.pushAndRemoveUntil(
-                context,
-                MaterialPageRoute(builder: (context) => const RoleSelectionScreen()),
-                    (route) => false,
-              );
-            },
-            icon: const CircleAvatar(
-              backgroundColor: Colors.grey,
-              child: Icon(
-                Icons.person,
-                color: Colors.white,
-              ),
-            ),
-          ),
-        ],
+        // actions: [
+        //   IconButton(
+        //     onPressed: () async {
+        //       await authService.signOut();
+        //       Navigator.pushAndRemoveUntil(
+        //         context,
+        //         MaterialPageRoute(builder: (context) => const RoleSelectionScreen()),
+        //             (route) => false,
+        //       );
+        //     },
+        //     icon: const CircleAvatar(
+        //       backgroundColor: Colors.grey,
+        //       child: Icon(
+        //         Icons.person,
+        //         color: Colors.white,
+        //       ),
+        //     ),
+        //   ),
+        // ],
       ),
       drawer: Drawer(
         child: SingleChildScrollView(
@@ -191,7 +194,13 @@ class TeacherDashboard extends StatelessWidget {
               context,
               MaterialPageRoute(builder: (context) => const SessionPlanScreen()),
             );
-          } else {
+          }else if(title == 'Progress Indicator'){
+            Navigator.push(
+              context,
+              MaterialPageRoute(builder: (context) => const ProgressScreen()),
+            );
+          }
+          else {
             _showComingSoonDialog(context);
           }
         },

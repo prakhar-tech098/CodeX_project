@@ -46,7 +46,7 @@ class StudentDashboardScreen extends StatelessWidget {
             fontWeight: FontWeight.bold,
           ),
         ),
-        backgroundColor: Colors.white,
+        backgroundColor: Colors.green,
         elevation: 1,
         actions: [
           IconButton(

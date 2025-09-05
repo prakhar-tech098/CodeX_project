@@ -1,9 +1,7 @@
 import 'package:flutter/material.dart';
-import 'package:sih_timetable/features/presentation/pages/dashboard_screen.dart';
-import '../../presentation/pages/student_dashboard.dart';
+import '../../presentation/pages/student_dashboard.dart'; // Make sure this path is correct
 import 'auth_service.dart';
 import 'student_signup.dart';
-// Assuming dashboards folder
 
 class StudentLoginScreen extends StatefulWidget {
   const StudentLoginScreen({super.key});
@@ -20,18 +18,20 @@ class _StudentLoginScreenState extends State<StudentLoginScreen> {
   bool _isLoading = false;
 
   void _login() async {
+    // Hide keyboard
+    FocusScope.of(context).unfocus();
+
     if (_formKey.currentState!.validate()) {
       setState(() {
         _isLoading = true;
       });
 
       final userCredential = await _authService.signInWithEmailPassword(
-        _emailController.text,
-        _passwordController.text,
+        _emailController.text.trim(),
+        _passwordController.text.trim(),
         context,
       );
 
-      // Check if the widget is still in the tree
       if (!mounted) return;
 
       setState(() {
@@ -39,16 +39,25 @@ class _StudentLoginScreenState extends State<StudentLoginScreen> {
       });
 
       if (userCredential != null) {
+        // --- HELPFUL DEBUG LINES ---
+        print('Firebase login successful for UID: ${userCredential.user!.uid}');
         final role = await _authService.getUserRole(userCredential.user!.uid);
+        print('Fetched role from Firestore: $role');
+        // --- END OF DEBUG LINES ---
+
         if (role == 'student') {
-          // Navigator.pushReplacement(
-          //   context,
-          //   MaterialPageRoute(builder: (context) => StudentDashboardScreen()),
-          // );
+          print('Role is "student". Navigating to dashboard...');
+          // **FIXED:** Uncommented the navigation and ensured the screen name is correct.
+          Navigator.pushAndRemoveUntil(
+            context,
+            MaterialPageRoute(builder: (context) => const StudentDashboardScreen()),
+                (route) => false, // This removes all previous screens from the stack
+          );
         } else {
+          print('Role check failed or role is not "student". Signing out.');
           _authService.signOut();
           ScaffoldMessenger.of(context).showSnackBar(
-            const SnackBar(content: Text('Not a student account.')),
+            const SnackBar(content: Text('Not a student account or role not found.')),
           );
         }
       }
@@ -58,8 +67,6 @@ class _StudentLoginScreenState extends State<StudentLoginScreen> {
   // Function to show the forgot password dialog
   void _showForgotPasswordDialog() {
     final TextEditingController resetEmailController = TextEditingController();
-
-    // Pre-fill the email if the user has already typed it
     resetEmailController.text = _emailController.text;
 
     showDialog(
@@ -69,7 +76,7 @@ class _StudentLoginScreenState extends State<StudentLoginScreen> {
         content: Column(
           mainAxisSize: MainAxisSize.min,
           children: [
-            const Text('Enter your email address to receive a password reset link.'),
+            const Text('Enter your email to receive a password reset link.'),
             const SizedBox(height: 16),
             TextField(
               controller: resetEmailController,
@@ -125,7 +132,6 @@ class _StudentLoginScreenState extends State<StudentLoginScreen> {
               crossAxisAlignment: CrossAxisAlignment.center,
               children: [
                 const Icon(Icons.school, size: 80, color: Colors.blueAccent),
-
                 const SizedBox(height: 20),
                 const Text(
                   'STUDENT LOGIN',
@@ -156,7 +162,6 @@ class _StudentLoginScreenState extends State<StudentLoginScreen> {
                   ),
                   validator: (value) => value!.isEmpty ? 'Enter an email' : null,
                 ),
-
                 const SizedBox(height: 16),
                 TextFormField(
                   controller: _passwordController,
@@ -222,7 +227,6 @@ class _StudentLoginScreenState extends State<StudentLoginScreen> {
                     ),
                   ],
                 ),
-
               ],
             ),
           ),
@@ -231,3 +235,4 @@ class _StudentLoginScreenState extends State<StudentLoginScreen> {
     );
   }
 }
+
