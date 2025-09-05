@@ -126,7 +126,7 @@ class _TeacherLoginState extends State<TeacherLogin> {
                         ScaffoldMessenger.of(context).showSnackBar(
                           const SnackBar(content: Text("✅ Login Successful")),
                         );
-                        // TODO: Navigate to teacher dashboard
+
                       } else {
                         ScaffoldMessenger.of(context).showSnackBar(
                           const SnackBar(content: Text("❌ Login Failed")),

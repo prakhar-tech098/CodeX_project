@@ -165,7 +165,7 @@ class _StudentLoginState extends State<StudentLogin> {
                         ScaffoldMessenger.of(context).showSnackBar(
                           const SnackBar(content: Text("✅ Login Successful")),
                         );
-                        // TODO: Navigate to student dashboard/home
+
                       }
                     },
                     child: const Text(
