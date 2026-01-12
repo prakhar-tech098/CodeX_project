@@ -31,9 +31,33 @@ dependencies:
   flutter:
     sdk: flutter
 
+  # For the interactive calendar
+  table_calendar: ^3.0.9
+
+  # For PDF generation
+  pdf: ^3.10.4
+  printing: ^5.11.0 # For saving/sharing the PDF
+
+  # For Excel generation
+  excel: ^2.1.0
+
+  # For file system access and opening files
+  path_provider: ^2.1.1
+  open_file: ^3.3.2
+
+  # For formatting dates
+  intl: ^0.18.1
+
+
+  firebase_core: ^4.1.0
+  firebase_auth: ^6.0.2
+  cloud_firestore: ^6.0.1
+
+
   # The following adds the Cupertino Icons font to your application.
   # Use with the CupertinoIcons class for iOS style icons.
   cupertino_icons: ^1.0.8
+
 
 dev_dependencies:
   flutter_test:
@@ -58,8 +82,8 @@ flutter:
   uses-material-design: true
 
   # To add assets to your application, add an assets section, like this:
-  # assets:
-  #   - images/a_dot_burr.jpeg
+  assets:
+    - assets/images/
   #   - images/a_dot_ham.jpeg
 
   # An image asset can refer to one or more resolution-specific "variants", see
