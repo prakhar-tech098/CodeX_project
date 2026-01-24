@@ -98,7 +98,7 @@ class _SessionPlanScreenState extends State<SessionPlanScreen> {
       backgroundColor: const Color(0xFF1A1A2E), // Dark theme background
       appBar: AppBar(
         title: const Text("Academic Session Planner"),
-          backgroundColor: Colors.blue,
+          backgroundColor: Colors.blue  ,
         elevation: 0,
         actions: [
           IconButton(

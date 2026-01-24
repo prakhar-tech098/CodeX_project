@@ -31,6 +31,13 @@ dependencies:
   flutter:
     sdk: flutter
 
+  # For making HTTP requests (can be removed if no other services use it)
+  http: ^1.1.0
+
+  # Add this line for direct MongoDB connection
+  mongo_dart: ^0.9.3
+
+
   # For the interactive calendar
   table_calendar: ^3.0.9
 
