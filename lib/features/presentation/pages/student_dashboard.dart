@@ -1,6 +1,7 @@
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:sih_timetable/features/presentation/pages/session_plan.dart';
+import 'package:sih_timetable/features/presentation/pages/student_timetable.dart';
 import '../../authentication/auth/auth_service.dart';
 import '../../authentication/auth/role_section.dart';
 
@@ -17,7 +18,7 @@ class StudentDashboardScreen extends StatelessWidget {
     {'icon': Icons.book_outlined, 'title': 'Bulletin Board'},
     {'icon': Icons.description_outlined, 'title': 'Syllabus'},
     {'icon': Icons.schedule_outlined, 'title': 'Session Plan'},
-
+    {'icon': Icons.schedule_outlined, 'title': 'Timetable'},
     {'icon': Icons.flight_land_outlined, 'title': 'Leave\nApplication'},
 
     {'icon': Icons.chat_bubble_outline, 'title': 'Lecture\nFeedback'},
@@ -229,7 +230,13 @@ class StudentDashboardScreen extends StatelessWidget {
               context,
               MaterialPageRoute(builder: (context) => const SessionPlanScreen()),
             );
-          } else {
+          } else if (title == 'Timetable') {
+            Navigator.push(
+              context,
+              // Replace TimetableScreen() with your actual screen class name
+              MaterialPageRoute(builder: (context) => const StudentTimetableScreen()),
+            );
+          }else {
             _showComingSoonDialog(context);
           }
         },
@@ -254,6 +261,8 @@ class StudentDashboardScreen extends StatelessWidget {
         ),
       ),
     );
+
+
   }
 
   void _showComingSoonDialog(BuildContext context) {

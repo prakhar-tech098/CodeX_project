@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import '../../presentation/pages/teacher_dashboard.dart';
 import 'auth_service.dart';
-import 'teacher_signup.dart';
+
 // Assuming dashboards folder
 
 class TeacherLoginScreen extends StatefulWidget {
@@ -194,30 +194,7 @@ class _TeacherLoginScreenState extends State<TeacherLoginScreen> {
                   child: const Text('Login', style: TextStyle(fontSize: 18)),
                 ),
                 const SizedBox(height: 20),
-                Row(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  children: [
-                    const Text(
-                      "Don't have an account? ",
-                      style: TextStyle(color: Colors.black54),
-                    ),
-                    InkWell(
-                      onTap: () {
-                        Navigator.push(
-                          context,
-                          MaterialPageRoute(builder: (context) => const TeacherSignUpScreen()),
-                        );
-                      },
-                      child: const Text(
-                        'Create Account',
-                        style: TextStyle(
-                          color: Colors.lightBlue,
-                          fontWeight: FontWeight.bold,
-                        ),
-                      ),
-                    ),
-                  ],
-                ),
+
               ],
             ),
           ),

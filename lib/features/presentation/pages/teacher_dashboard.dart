@@ -8,6 +8,7 @@ import 'package:sih_timetable/features/presentation/pages/timetable.dart';
 import '../../authentication/auth/auth_service.dart';
 import '../../authentication/auth/role_section.dart';
 
+
 class TeacherDashboard extends StatelessWidget {
   const TeacherDashboard({super.key});
 
@@ -187,22 +188,29 @@ class TeacherDashboard extends StatelessWidget {
               Navigator.pop(context);
 
               if (userDetails != null) {
-                final userRole = (userDetails['role'] ?? '').toString().toLowerCase();
-                final uid = userDetails['uid'];          // use uid directly
+                final userRole =
+                (userDetails['role'] ?? '').toString().toLowerCase();
+
+                final firebaseUser = FirebaseAuth.instance.currentUser;
+                if (firebaseUser == null) {
+                  throw Exception('User not logged in');
+                }
+
+                final String uid = firebaseUser.uid; // ✅ ALWAYS non-null
 
                 if (userRole == 'teacher') {
                   Navigator.push(
                     context,
                     MaterialPageRoute(
-                      builder: (_) => TimeTableScreen(
-                        userId: uid,                      // pass uid
-                        userRole: userRole,
+                      builder: (_) => TeacherTimeTableScreen(
+                        userId: uid, // ✅ SAFE
                       ),
                     ),
                   );
                 } else {
-                  ScaffoldMessenger.of(context)
-                      .showSnackBar(const SnackBar(content: Text('Role is not teacher.')));
+                  ScaffoldMessenger.of(context).showSnackBar(
+                    const SnackBar(content: Text('You are not a teacher.')),
+                  );
                 }
               }
             } catch (e) {

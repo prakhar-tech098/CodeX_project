@@ -1,170 +1,144 @@
 import 'package:flutter/material.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
+import '../../../core/models/tescherTimetable_entry.dart';
 import '../../authentication/auth/timetable_service.dart';
+// Import your new separate teacher model
 
-class TimeTableScreen extends StatefulWidget {
+
+class TeacherTimeTableScreen extends StatefulWidget {
   final String userId;
-  final String userRole;
 
-  const TimeTableScreen({
+  const TeacherTimeTableScreen({
     super.key,
     required this.userId,
-    required this.userRole,
   });
 
   @override
-  State<TimeTableScreen> createState() => _TimeTableScreenState();
+  State<TeacherTimeTableScreen> createState() => _TeacherTimeTableScreenState();
 }
 
-class _TimeTableScreenState extends State<TimeTableScreen> {
-  late Future<List<Map<String, dynamic>>> _future;
+class _TeacherTimeTableScreenState extends State<TeacherTimeTableScreen> {
+  // Use the NEW Teacher model here
+  late Future<List<TeacherTimetableEntry>> _timetableFuture;
+  String _teacherDisplayName = "Teacher";
 
   @override
   void initState() {
     super.initState();
-    _future = Future.delayed(
-      const Duration(seconds: 5),
-          () => TimetableService().getTimetableForTeacher(widget.userId),
-    ).then((f) => f);
+    _timetableFuture = _initializeTeacherData();
+  }
+
+  Future<List<TeacherTimetableEntry>> _initializeTeacherData() async {
+    // 1. Fetch teacher name from Firestore
+    final userDoc = await FirebaseFirestore.instance.collection('users').doc(widget.userId).get();
+    final name = userDoc.data()?['name'] ?? "";
+
+    if (mounted) {
+      setState(() {
+        _teacherDisplayName = name;
+      });
+    }
+
+    // 2. Fetch via the updated service method that returns TeacherTimetableEntry
+    return TimetableService().fetchTeacherTimetableByName(name);
   }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: Colors.grey[100],
+      backgroundColor: Colors.white,
       appBar: AppBar(
-        title: const Text('My Timetable'),
-        backgroundColor: Colors.orange,
+        title: Text('Schedule: $_teacherDisplayName'),
+        backgroundColor: Colors.indigo,
+        foregroundColor: Colors.white,
       ),
-      body: FutureBuilder<List<Map<String, dynamic>>>(
-        future: _future,
+      body: FutureBuilder<List<TeacherTimetableEntry>>(
+        future: _timetableFuture,
         builder: (context, snap) {
           if (snap.connectionState == ConnectionState.waiting) {
-            return const Center(child: CircularProgressIndicator());
+            return const Center(child: CircularProgressIndicator(color: Colors.indigo));
           }
           if (snap.hasError) {
             return Center(child: Text('Error: ${snap.error}'));
           }
-          if (!snap.hasData || snap.data!.isEmpty) {
-            return const Center(child: Text('No timetable found.'));
+
+          final docs = snap.data ?? [];
+          if (docs.isEmpty) {
+            return const Center(child: Text('No classes found for your name.'));
           }
-          return _buildTimeTable(snap.data!);
+
+          return _buildTimeTable(docs);
         },
       ),
     );
   }
 
-  Widget _buildTimeTable(List<Map<String, dynamic>> docs) {
-    /// Display columns as time slots
-    final timeSlots = [
-      '9:10 – 10:00',
-      '10:10 – 11:00',
-      '11:10 – 12:00',
-      '12:00 – 01:00 (Lunch)',
-      '01:10 – 02:00',
-      '02:10 – 03:00',
-    ];
+  Widget _buildTimeTable(List<TeacherTimetableEntry> docs) {
+    const days = ['MONDAY', 'TUESDAY', 'WEDNESDAY', 'THURSDAY', 'FRIDAY'];
+    final Map<String, TeacherTimetableEntry> cellMap = {};
 
-    /// Display rows as days
-    const days = ['Mon', 'Tue', 'Wed', 'Thu', 'Fri'];
-
-    /// Build quick lookup by "day_slot"
-    final Map<String, Map<String, dynamic>> cellMap = {};
     for (var d in docs) {
-      final key = '${d['day']}_${d['slot']}';
-      cellMap[key] = d;
+      final String day = d.day.toUpperCase();
+      final int slot = d.period;
+      cellMap['${day}_$slot'] = d;
     }
 
     return SingleChildScrollView(
       scrollDirection: Axis.horizontal,
       child: SingleChildScrollView(
         scrollDirection: Axis.vertical,
-        child: Card(
-          elevation: 3,
-          margin: const EdgeInsets.all(12),
-          shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8)),
+        child: Padding(
+          padding: const EdgeInsets.all(12.0),
           child: DataTable(
-            headingRowColor: MaterialStateProperty.resolveWith(
-                  (_) => Colors.orange[200]!,
-            ),
-            dataRowHeight: 80,
-            columnSpacing: 18,
+            headingRowColor: WidgetStateProperty.all(Colors.indigo[50]),
+            dataRowMaxHeight: 100,
+            border: TableBorder.all(color: Colors.grey.shade300),
             columns: [
-              const DataColumn(
-                label: Text('Day', style: TextStyle(fontWeight: FontWeight.bold)),
-              ),
-              ...timeSlots.map(
-                    (slot) => DataColumn(
-                  label: Text(
-                    slot,
-                    style: const TextStyle(fontWeight: FontWeight.bold),
-                  ),
-                ),
-              ),
+              const DataColumn(label: Text('DAY', style: TextStyle(fontWeight: FontWeight.bold))),
+              ...List.generate(6, (i) => DataColumn(label: Text('P${i + 1}'))),
             ],
             rows: days.map((day) {
               return DataRow(
                 cells: [
-                  DataCell(Text(day)),
-                  ...List.generate(timeSlots.length, (index) {
-                    // Slot numbering: 1,2,3 then skip lunch then 4,5 after lunch
-                    if (index == 3) {
-                      return DataCell(
-                        Container(
-                          color: Colors.grey[200],
-                          alignment: Alignment.center,
-                          child: const Text(
-                            'LUNCH',
-                            style: TextStyle(
-                              fontWeight: FontWeight.bold,
-                              color: Colors.black54,
-                            ),
-                          ),
-                        ),
-                      );
-                    }
+                  DataCell(Text(day.substring(0, 3), style: const TextStyle(fontWeight: FontWeight.bold))),
+                  ...List.generate(6, (index) {
+                    final slotNumber = index + 1;
+                    final entry = cellMap['${day}_$slotNumber'];
 
-                    // adjust for DB slot after lunch
-                    final slotNumber = index >= 3 ? index : index + 1;
-                    final key = '${day}_$slotNumber';
-                    final cell = cellMap[key];
-
-                    if (cell == null) return const DataCell(Text(''));
+                    if (entry == null) return const DataCell(Center(child: Text("-")));
 
                     return DataCell(
-                      Container(
-                        padding: const EdgeInsets.all(6),
-                        decoration: BoxDecoration(
-                          color: Colors.blue[50],
-                          borderRadius: BorderRadius.circular(6),
-                        ),
+                      SizedBox(
+                        width: 140,
                         child: Column(
+                          mainAxisAlignment: MainAxisAlignment.center,
                           crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
                             Text(
-                              cell['course'] ?? '',
-                              maxLines: 2,
-                              overflow: TextOverflow.ellipsis,
-                              style: const TextStyle(
-                                fontWeight: FontWeight.bold,
-                                fontSize: 13,
-                              ),
+                              entry.subjectName,
+                              style: const TextStyle(fontWeight: FontWeight.bold, color: Colors.indigo),
+                            ),
+                            // This now works because it is defined in TeacherTimetableEntry!
+                            Text(
+                              "Branch: ${entry.branchName}",
+                              style: const TextStyle(fontSize: 11, color: Colors.black87),
                             ),
                             const SizedBox(height: 4),
-                            Text(
-                              cell['faculty_name'] ?? '',
-                              style: TextStyle(
-                                fontSize: 11,
-                                color: Colors.grey.shade700,
+                            Container(
+                              padding: const EdgeInsets.symmetric(horizontal: 4, vertical: 2),
+                              decoration: BoxDecoration(
+                                  color: Colors.orange[50],
+                                  borderRadius: BorderRadius.circular(4)
                               ),
-                            ),
-                            if (cell['room'] != null)
-                              Text(
-                                cell['room'],
+                              child: Text(
+                                entry.roomName,
                                 style: TextStyle(
-                                  fontSize: 10,
-                                  color: Colors.grey.shade600,
+                                    fontSize: 10,
+                                    color: Colors.orange[900],
+                                    fontWeight: FontWeight.bold
                                 ),
                               ),
+                            ),
                           ],
                         ),
                       ),
