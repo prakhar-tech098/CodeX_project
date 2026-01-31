@@ -12,7 +12,8 @@ class AuthService {
   }
 
   // Sign in with email and password
-  Future<UserCredential?> signInWithEmailPassword(String email, String password, BuildContext context) async {
+  Future<UserCredential?> signInWithEmailPassword(String email, String password,
+      BuildContext context) async {
     try {
       UserCredential userCredential = await _auth.signInWithEmailAndPassword(
         email: email,
@@ -28,9 +29,11 @@ class AuthService {
   }
 
   // Sign up with email and password
-  Future<UserCredential?> signUpWithEmailPassword(String name, String email, String password, String role, BuildContext context) async {
+  Future<UserCredential?> signUpWithEmailPassword(String name, String email,
+      String password, String role, BuildContext context) async {
     try {
-      UserCredential userCredential = await _auth.createUserWithEmailAndPassword(
+      UserCredential userCredential = await _auth
+          .createUserWithEmailAndPassword(
         email: email,
         password: password,
       );
@@ -60,7 +63,9 @@ class AuthService {
   // Get user role from Firestore
   Future<String?> getUserRole(String uid) async {
     try {
-      DocumentSnapshot doc = await _firestore.collection('users').doc(uid).get();
+      DocumentSnapshot doc = await _firestore.collection('users')
+          .doc(uid)
+          .get();
 
       if (doc.exists && doc.data() != null) {
         final data = doc.data() as Map<String, dynamic>;
@@ -74,12 +79,15 @@ class AuthService {
     }
   }
 
+
   // NEW: Send Password Reset Email
-  Future<void> sendPasswordResetEmail(String email, BuildContext context) async {
+  Future<void> sendPasswordResetEmail(String email,
+      BuildContext context) async {
     try {
       await _auth.sendPasswordResetEmail(email: email);
       ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(content: Text('Password reset link sent! Check your email.')),
+        const SnackBar(
+            content: Text('Password reset link sent! Check your email.')),
       );
     } on FirebaseAuthException catch (e) {
       ScaffoldMessenger.of(context).showSnackBar(
@@ -87,5 +95,19 @@ class AuthService {
       );
     }
   }
-}
 
+  Future<Map<String, dynamic>?> getUserDetails() async {
+    final User? currentUser = _auth.currentUser;
+    if (currentUser == null) {
+      return null; // Return null if no user is logged in
+    }
+    try {
+      DocumentSnapshot doc = await _firestore.collection('users').doc(
+          currentUser.uid).get();
+      return doc.data() as Map<String, dynamic>?;
+    } catch (e) {
+      print("Error fetching user details: $e");
+      return null;
+    }
+  }
+}

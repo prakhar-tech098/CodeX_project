@@ -1,5 +1,7 @@
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:sih_timetable/features/presentation/pages/session_plan.dart';
+import 'package:sih_timetable/features/presentation/pages/student_timetable.dart';
 import '../../authentication/auth/auth_service.dart';
 import '../../authentication/auth/role_section.dart';
 
@@ -16,7 +18,7 @@ class StudentDashboardScreen extends StatelessWidget {
     {'icon': Icons.book_outlined, 'title': 'Bulletin Board'},
     {'icon': Icons.description_outlined, 'title': 'Syllabus'},
     {'icon': Icons.schedule_outlined, 'title': 'Session Plan'},
-
+    {'icon': Icons.schedule_outlined, 'title': 'Timetable'},
     {'icon': Icons.flight_land_outlined, 'title': 'Leave\nApplication'},
 
     {'icon': Icons.chat_bubble_outline, 'title': 'Lecture\nFeedback'},
@@ -25,6 +27,8 @@ class StudentDashboardScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final AuthService authService = AuthService();
+
+    final User? currentUser = FirebaseAuth.instance.currentUser;
 
     return Scaffold(
       backgroundColor: Colors.grey[200],
@@ -48,107 +52,141 @@ class StudentDashboardScreen extends StatelessWidget {
         ),
         backgroundColor: Colors.green,
         elevation: 1,
-        actions: [
-          IconButton(
-            onPressed: () async {
-              await authService.signOut();
-              Navigator.pushAndRemoveUntil(
-                context,
-                MaterialPageRoute(builder: (context) => const RoleSelectionScreen()),
-                    (route) => false,
-              );
-            },
-            icon: const CircleAvatar(
-              backgroundColor: Colors.grey,
-              child: Icon(
-                Icons.person,
-                color: Colors.white,
-              ),
-            ),
-          ),
-        ],
+        // actions: [
+        //   IconButton(
+        //     onPressed: () async {
+        //       await authService.signOut();
+        //       Navigator.pushAndRemoveUntil(
+        //         context,
+        //         MaterialPageRoute(builder: (context) => const RoleSelectionScreen()),
+        //             (route) => false,
+        //       );
+        //     },
+        //     icon: const CircleAvatar(
+        //       backgroundColor: Colors.grey,
+        //       child: Icon(
+        //         Icons.person,
+        //         color: Colors.white,
+        //       ),
+        //     ),
+        //   ),
+        // ],
       ),
       drawer: Drawer(
-        child: SingleChildScrollView(
-          child: Column(
-            children: <Widget>[
-              DrawerHeader(
-
-
-                decoration: BoxDecoration(
-                  color: Colors.lightBlue,
-                ),
-                child: SizedBox(
-                  width: double.infinity,
-                  height: double.infinity,
-
-
-                  child: Column(
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      CircleAvatar(
-                        backgroundColor: Colors.white,
-                        radius: 20,
-                        child: Icon(
-                          Icons.person,
-                          size: 40,
-                          color: Colors.lightBlue,
-                        ),
-                      ),
-                      SizedBox(height: 7,),
-
-                      Text(
-                        'Ish Gupta',
-                        style: TextStyle(
-                          color: Colors.white,
-                          fontSize: 18,
-                        ),
-                      ),
-
-
-                      Text(
-                        'Course Name: B.Tech CS',
-                        style: TextStyle(color: Colors.white),
-                      ),
-                      Text(
-                        'Semester Name: SEM-V',
-                        style: TextStyle(color: Colors.white),
-                      ),
-
-                    ],
-                  ),
-                ),
-              ),
-
-              const Divider(),
-
-              ListTile(
-                leading: const Icon(Icons.description_outlined, color: Colors.black54),
-                title: const Text('Licenses'),
-                onTap: () {},
-              ),
-              ListTile(
-                leading: const Icon(Icons.bug_report, color: Colors.black54),
-                title: const Text('Report Bug'),
-                onTap: () {},
-              ),
-              ListTile(
-                leading: const Icon(Icons.logout, color: Colors.black54),
-                title: const Text('Logout'),
-                onTap: () async {
-                  await authService.signOut();
-                  Navigator.pushAndRemoveUntil(
-                    context,
-                    MaterialPageRoute(builder: (context) => const RoleSelectionScreen()),
-                        (route) => false,
+        child: Column(
+          children: [
+            // This is the header that will show the user's details
+            FutureBuilder<Map<String, dynamic>?>(
+              future: authService.getUserDetails(),
+              builder: (context, snapshot) {
+                // --- While waiting for data, show a loading state ---
+                if (snapshot.connectionState == ConnectionState.waiting) {
+                  return UserAccountsDrawerHeader(
+                    accountName: const Text("Loading..."),
+                    accountEmail: Text(currentUser?.email ?? "Loading email..."),
+                    currentAccountPicture: const CircleAvatar(
+                      child: CircularProgressIndicator(color: Colors.white),
+                    ),
+                    decoration: const BoxDecoration(color: Color(0xFF16213E)),
                   );
-                },
-              ),
-            ],
-          ),
+                }
+
+                // --- If there's an error or no data, show a default state ---
+                if (snapshot.hasError || !snapshot.hasData || snapshot.data == null) {
+                  return UserAccountsDrawerHeader(
+                    accountName: const Text("User Not Found"),
+                    accountEmail: Text(currentUser?.email ?? "No email"),
+                    currentAccountPicture: const CircleAvatar(
+                      child: Icon(Icons.person),
+                    ),
+                    decoration: const BoxDecoration(color: Color(0xFF16213E)),
+                  );
+                }
+
+                // --- When data is successfully fetched, display it ---
+                final userData = snapshot.data!;
+                final userName = userData['name'] ?? 'No Name Provided';
+                final userEmail = userData['email'] ?? 'No Email Provided';
+
+                return UserAccountsDrawerHeader(
+                  accountName: Text(
+                    userName,
+                    style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 18),
+                  ),
+                  accountEmail: Text(userEmail),
+                  currentAccountPicture: CircleAvatar(
+                    backgroundColor: const Color(0xFFE94560),
+                    child: Text(
+                      userName.isNotEmpty ? userName[0].toUpperCase() : 'U',
+                      style: const TextStyle(fontSize: 40.0, color: Colors.white),
+                    ),
+                  ),
+                  decoration: const BoxDecoration(color: Color(0xFF16213E)),
+                );
+              },
+            ),
+
+            // --- Other Drawer Items ---
+            ListTile(
+              leading: const Icon(Icons.dashboard),
+              title: const Text('Dashboard'),
+              onTap: () {
+                Navigator.pop(context);
+              },
+            ),
+            ListTile(
+              leading: const Icon(Icons.person),
+              title: const Text('Profile'),
+              onTap: () {
+                
+              },
+            ),
+            const Spacer(), // Pushes the logout button to the bottom
+            ListTile(
+              leading: const Icon(Icons.logout),
+              title: const Text('Logout'),
+              onTap: () async {
+                await authService.signOut();
+                Navigator.pushAndRemoveUntil(
+                  context,
+                  MaterialPageRoute(builder: (context) => const RoleSelectionScreen()),
+                      (route) => false,
+                );
+              },
+            ),
+            const SizedBox(height: 10),
+          ],
         ),
       ),
+
+      //         const Divider(),
+      //
+      //         ListTile(
+      //           leading: const Icon(Icons.description_outlined, color: Colors.black54),
+      //           title: const Text('Licenses'),
+      //           onTap: () {},
+      //         ),
+      //         ListTile(
+      //           leading: const Icon(Icons.bug_report, color: Colors.black54),
+      //           title: const Text('Report Bug'),
+      //           onTap: () {},
+      //         ),
+      //         ListTile(
+      //           leading: const Icon(Icons.logout, color: Colors.black54),
+      //           title: const Text('Logout'),
+      //           onTap: () async {
+      //             await authService.signOut();
+      //             Navigator.pushAndRemoveUntil(
+      //               context,
+      //               MaterialPageRoute(builder: (context) => const RoleSelectionScreen()),
+      //                   (route) => false,
+      //             );
+      //           },
+      //         ),
+      //       ],
+      //     ),
+      //   ),
+      // ),
       body: Padding(
         padding: const EdgeInsets.all(16.0),
         child: GridView.builder(
@@ -192,7 +230,13 @@ class StudentDashboardScreen extends StatelessWidget {
               context,
               MaterialPageRoute(builder: (context) => const SessionPlanScreen()),
             );
-          } else {
+          } else if (title == 'Timetable') {
+            Navigator.push(
+              context,
+              // Replace TimetableScreen() with your actual screen class name
+              MaterialPageRoute(builder: (context) => const StudentTimetableScreen()),
+            );
+          }else {
             _showComingSoonDialog(context);
           }
         },
@@ -217,6 +261,8 @@ class StudentDashboardScreen extends StatelessWidget {
         ),
       ),
     );
+
+
   }
 
   void _showComingSoonDialog(BuildContext context) {

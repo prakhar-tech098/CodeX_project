@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import '../../presentation/pages/student_dashboard.dart'; // Make sure this path is correct
 import 'auth_service.dart';
-import 'student_signup.dart';
 
 class StudentLoginScreen extends StatefulWidget {
   const StudentLoginScreen({super.key});
@@ -203,30 +202,7 @@ class _StudentLoginScreenState extends State<StudentLoginScreen> {
                   child: const Text('Login', style: TextStyle(fontSize: 18)),
                 ),
                 const SizedBox(height: 20),
-                Row(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  children: [
-                    const Text(
-                      "Don't have an account? ",
-                      style: TextStyle(color: Colors.black54),
-                    ),
-                    InkWell(
-                      onTap: () {
-                        Navigator.push(
-                          context,
-                          MaterialPageRoute(builder: (context) => const StudentSignUpScreen()),
-                        );
-                      },
-                      child: const Text(
-                        'Create Account',
-                        style: TextStyle(
-                          color: Colors.lightBlue,
-                          fontWeight: FontWeight.bold,
-                        ),
-                      ),
-                    ),
-                  ],
-                ),
+
               ],
             ),
           ),
